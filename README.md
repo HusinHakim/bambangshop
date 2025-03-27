@@ -65,11 +65,11 @@ You can install Postman via this website: https://www.postman.com/downloads/
     -   [x] Commit: `Implement unsubscribe function in Notification controller.`
     -   [x] Write answers of your learning module's "Reflection Publisher-2" questions in this README.
 -   **STAGE 3: Implement notification mechanism**
-    -   [ ] Commit: `Implement update method in Subscriber model to send notification HTTP requests.`
-    -   [ ] Commit: `Implement notify function in Notification service to notify each Subscriber.`
-    -   [ ] Commit: `Implement publish function in Program service and Program controller.`
-    -   [ ] Commit: `Edit Product service methods to call notify after create/delete.`
-    -   [ ] Write answers of your learning module's "Reflection Publisher-3" questions in this README.
+    -   [x] Commit: `Implement update method in Subscriber model to send notification HTTP requests.`
+    -   [x] Commit: `Implement notify function in Notification service to notify each Subscriber.`
+    -   [x] Commit: `Implement publish function in Program service and Program controller.`
+    -   [x] Commit: `Edit Product service methods to call notify after create/delete.`
+    -   [x] Write answers of your learning module's "Reflection Publisher-3" questions in this README.
 
 ## Your Reflections
 This is the place for you to write reflections:
@@ -105,3 +105,28 @@ This is the place for you to write reflections:
    - **Collaboration**: Sharing collections with team members ensures everyone tests against the same endpoints with the same parameters, improving collaboration and reducing misunderstandings.
 
 #### Reflection Publisher-3
+1. In this tutorial case, we are using the **Push model** variation of the Observer Pattern. The publisher (BambangShop) actively pushes data to the subscribers whenever there is a relevant event (product creation, deletion, or promotion). This is evident in our implementation where:
+   - The `NotificationService.notify()` method prepares notification payloads with all the necessary information about the product event
+   - The `Subscriber.update()` method sends HTTP POST requests to subscribers with complete notification data
+   - Subscribers don't need to request or pull any additional information; all relevant details are included in the notification payload
+
+2. If we were to use the **Pull model** instead:
+
+   **Advantages:**
+   - **Reduced network traffic**: The publisher would only send minimal notifications that an event occurred, and subscribers would pull detailed information only when needed
+   - **More subscriber control**: Subscribers could request only the specific information they need, when they need it
+   - **Better handling of large data**: If product data is extensive, not sending it with every notification could save bandwidth
+
+   **Disadvantages:**
+   - **Increased latency**: Subscribers would need to make additional requests to get complete information, adding delay
+   - **More complex implementation**: We would need to implement additional endpoints for subscribers to fetch product details
+   - **Higher server load**: The publisher might face multiple simultaneous requests from subscribers after an event notification
+   - **Potential data inconsistency**: By the time a subscriber pulls information, the product data might have changed again
+
+3. If we did not use multi-threading in the notification process, several issues would arise:
+   - **Blocking behavior**: Sending notifications would block the main thread, causing the API to become unresponsive during notification sending
+   - **Poor user experience**: Users would experience significant delays when creating, deleting, or publishing products while the system waits for all notifications to complete
+   - **Cascading failures**: If one subscriber is slow to respond or times out, it would delay the entire notification process and affect all other operations
+   - **Limited scalability**: As the number of subscribers grows, the delay would increase linearly, making the system increasingly sluggish
+   
+   By using multi-threading (with `thread::spawn`), we ensure that notifications are sent asynchronously in the background, allowing the main API operations to respond quickly regardless of how many subscribers need to be notified or how long they take to receive notifications.
