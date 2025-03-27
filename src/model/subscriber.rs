@@ -1,6 +1,7 @@
 use rocket::serde::{Deserialize, Serialize};
 use rocket::serde::json::to_string;
 use rocket::log;
+use rocket::tokio;
 use bambangshop::REQWEST_CLIENT;
 use crate::model::notification::Notification;
 
@@ -17,10 +18,10 @@ impl Subscriber {
         REQWEST_CLIENT
             .post(&self.url)
             .header("Content-Type", "JSON")
-            .post(to_string(&payload).unwrap())
+            .body(to_string(&payload).unwrap())
             .send().await.ok();
             
-        log::warn!("<Sent {} notification of: {{}}, type: {}, title: {}, to: {}>", 
+        log::warn_!("<Sent {} notification of: {{}}, type: {}, title: {}, to: {}>", 
             payload.status, payload.product_type, payload.product_title, self.url);
     }
 } 
