@@ -50,13 +50,13 @@ You can install Postman via this website: https://www.postman.com/downloads/
 ## Mandatory Checklists (Publisher)
 -   [ ] Clone https://gitlab.com/ichlaffterlalu/bambangshop to a new repository.
 -   **STAGE 1: Implement models and repositories**
-    -   [ ] Commit: `Create Subscriber model struct.`
-    -   [ ] Commit: `Create Notification model struct.`
-    -   [ ] Commit: `Create Subscriber database and Subscriber repository struct skeleton.`
-    -   [ ] Commit: `Implement add function in Subscriber repository.`
-    -   [ ] Commit: `Implement list_all function in Subscriber repository.`
-    -   [ ] Commit: `Implement delete function in Subscriber repository.`
-    -   [ ] Write answers of your learning module's "Reflection Publisher-1" questions in this README.
+    -   [x] Commit: `Create Subscriber model struct.`
+    -   [x] Commit: `Create Notification model struct.`
+    -   [x] Commit: `Create Subscriber database and Subscriber repository struct skeleton.`
+    -   [x] Commit: `Implement add function in Subscriber repository.`
+    -   [x] Commit: `Implement list_all function in Subscriber repository.`
+    -   [x] Commit: `Implement delete function in Subscriber repository.`
+    -   [x] Write answers of your learning module's "Reflection Publisher-1" questions in this README.
 -   **STAGE 2: Implement services and controllers**
     -   [ ] Commit: `Create Notification service struct skeleton.`
     -   [ ] Commit: `Implement subscribe function in Notification service.`
@@ -77,6 +77,11 @@ This is the place for you to write reflections:
 ### Mandatory (Publisher) Reflections
 
 #### Reflection Publisher-1
+1. In the Observer pattern diagram explained by the Head First Design Pattern book, Subscriber is defined as an interface. However, in this BambangShop case, a single Model struct is sufficient instead of using an interface (or trait in Rust). This is because we have a simple, uniform implementation for all subscribers - they all have the same attributes (url and name) and behavior. If we needed to support different types of subscribers with varying behaviors or attributes, then a trait would be beneficial to establish a common contract while allowing for different implementations. But since our subscribers all follow the same pattern and there's no polymorphic behavior needed, a struct is adequate and simpler.
+
+2. Using DashMap (map/dictionary) is necessary rather than Vec (list) for this case because we need efficient lookups by unique identifiers. With a Vec, finding a specific subscriber would require iterating through the entire collection (O(n) time complexity), which becomes inefficient as the number of subscribers grows. DashMap provides O(1) lookup time complexity using the unique URL as the key, making operations like retrieving, updating, or deleting a specific subscriber much more efficient. Additionally, our repository is organized with a two-level map structure (product_type -> url -> Subscriber) which naturally fits a map data structure better than a list.
+
+3. While we could implement the Singleton pattern instead of using DashMap, DashMap provides both thread safety and efficient concurrent access that would be challenging to implement manually. In Rust's ownership model, implementing a thread-safe singleton can be complex. DashMap handles concurrent read/write operations safely without blocking (lock-free), which is important for a system where multiple requests might access the subscriber list simultaneously. It combines the Singleton concept (we have a single global SUBSCRIBERS instance) with thread-safety guarantees. Implementing our own thread-safe singleton would likely require using mutex locks and more complex code, potentially with lower performance. DashMap provides a more elegant and efficient solution that aligns with Rust's emphasis on safe concurrency.
 
 #### Reflection Publisher-2
 
