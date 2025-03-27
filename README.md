@@ -58,12 +58,12 @@ You can install Postman via this website: https://www.postman.com/downloads/
     -   [x] Commit: `Implement delete function in Subscriber repository.`
     -   [x] Write answers of your learning module's "Reflection Publisher-1" questions in this README.
 -   **STAGE 2: Implement services and controllers**
-    -   [ ] Commit: `Create Notification service struct skeleton.`
-    -   [ ] Commit: `Implement subscribe function in Notification service.`
-    -   [ ] Commit: `Implement subscribe function in Notification controller.`
-    -   [ ] Commit: `Implement unsubscribe function in Notification service.`
-    -   [ ] Commit: `Implement unsubscribe function in Notification controller.`
-    -   [ ] Write answers of your learning module's "Reflection Publisher-2" questions in this README.
+    -   [x] Commit: `Create Notification service struct skeleton.`
+    -   [x] Commit: `Implement subscribe function in Notification service.`
+    -   [x] Commit: `Implement subscribe function in Notification controller.`
+    -   [x] Commit: `Implement unsubscribe function in Notification service.`
+    -   [x] Commit: `Implement unsubscribe function in Notification controller.`
+    -   [x] Write answers of your learning module's "Reflection Publisher-2" questions in this README.
 -   **STAGE 3: Implement notification mechanism**
     -   [ ] Commit: `Implement update method in Subscriber model to send notification HTTP requests.`
     -   [ ] Commit: `Implement notify function in Notification service to notify each Subscriber.`
@@ -84,5 +84,24 @@ This is the place for you to write reflections:
 3. While we could implement the Singleton pattern instead of using DashMap, DashMap provides both thread safety and efficient concurrent access that would be challenging to implement manually. In Rust's ownership model, implementing a thread-safe singleton can be complex. DashMap handles concurrent read/write operations safely without blocking (lock-free), which is important for a system where multiple requests might access the subscriber list simultaneously. It combines the Singleton concept (we have a single global SUBSCRIBERS instance) with thread-safety guarantees. Implementing our own thread-safe singleton would likely require using mutex locks and more complex code, potentially with lower performance. DashMap provides a more elegant and efficient solution that aligns with Rust's emphasis on safe concurrency.
 
 #### Reflection Publisher-2
+1. Separating "Service" and "Repository" from the Model provides several key advantages based on design principles:
+   - **Single Responsibility Principle**: Each component has a clearly defined responsibility - Models represent data structures, Repositories handle data access and storage, and Services contain business logic. This separation makes the code more maintainable and easier to understand.
+   - **Separation of Concerns**: By isolating data access (Repository) from business rules (Service), we can change how data is stored without impacting business logic, and vice versa. This enables greater flexibility and adaptability.
+   - **Testability**: Isolated components are easier to test. We can mock repositories when testing services, allowing us to test business logic without relying on actual data storage implementations.
+   - **Scalability**: As the application grows, clear boundaries between components help manage complexity and allow different team members to work on different layers without conflicts.
+
+2. If we only used Models without Services and Repositories, several problems would emerge:
+   - **Code Complexity**: Each Model would need to contain data structure definitions, business logic, and data access code. For example, the Subscriber model would need to handle subscription rules, data validation, and storage operations.
+   - **Tight Coupling**: Models would be directly dependent on each other. For instance, when a Product is created, it would directly interact with Notification and Subscriber models, creating a tightly coupled system where changes to one model could break others.
+   - **Reduced Reusability**: Business logic embedded in models would be difficult to reuse across different parts of the application.
+   - **Testing Difficulty**: Testing business logic would require setting up the entire data layer, making tests more complex and potentially brittle.
+
+3. Postman has been valuable for testing this project in several ways:
+   - **Request Organization**: The ability to organize related API calls into collections helps maintain a structured approach to testing different features (Products, Subscriptions, Notifications).
+   - **Environment Variables**: Using variables for the base URL and other parameters makes it easy to switch between development, testing, and production environments.
+   - **Request Chaining**: We can use data from one response in subsequent requests, which is particularly useful for testing the Observer pattern where we subscribe and then verify notifications.
+   - **Automated Testing**: Postman's scripting capabilities allow writing test cases that can be run automatically, ensuring that the API behaves as expected after each code change.
+   - **Request History**: Being able to see previous requests helps debug issues and understand the API's behavior over time.
+   - **Collaboration**: Sharing collections with team members ensures everyone tests against the same endpoints with the same parameters, improving collaboration and reducing misunderstandings.
 
 #### Reflection Publisher-3
